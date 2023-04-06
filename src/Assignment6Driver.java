@@ -14,8 +14,7 @@ public class Assignment6Driver {
         File file = new File(filename);
         try (Scanner input = new Scanner(file)) {
             // TODO: Write some good stuff here
-        }
-        catch (java.io.IOException ex) {
+        } catch (java.io.IOException ex) {
             System.out.println("An error occurred trying to read the moves file: " + ex);
         }
     }
@@ -46,8 +45,9 @@ public class Assignment6Driver {
 //        printGrid(game);
 //    }
 
-    // TODO: Complete this method
+        // TODO: Complete this method
 //    private static void printGrid(HexGame game) {
 //    }
 
+    }
 }
