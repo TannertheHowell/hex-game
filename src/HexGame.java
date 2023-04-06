@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class HexGame {
@@ -13,7 +14,7 @@ public class HexGame {
     private final int LEFT_EDGE = size + 3;
     private final int RIGHT_EDGE = size + 4;
 
-    // Constructor
+    // Constructor and setting up red/blue's disjoint sets
     public HexGame(int size){
         this.size = size;
         grid = new Color[size * size + 1];
@@ -29,7 +30,26 @@ public class HexGame {
     // When displayNeighbors is true, the hex positions of neighboring cells are shown
     // Return true if blue has won, otherwise false for not winning or if the space is full already
     public boolean playBlue(int position, boolean displayNeighbors){
-        return false;
+        // Check if the position is already full first
+        if(isOccupied(position)){
+            return false;
+        }
+
+        // If not, turn it blue
+        grid[position] = Color.Blue;
+        ArrayList<Integer> neighbors = getNeighborsBlue(position);
+
+        // Check for printing the neighbors
+        if(displayNeighbors){
+            System.out.println("Blue's neighbors: " + neighbors);
+        }
+        for (Integer neighbor : neighbors){
+            // See if we need to union different sets
+            if(grid[neighbor] == Color.Blue){
+                bluePlayer.union(position, neighbor);
+            }
+        }
+        return bluePlayer.find(LEFT_EDGE) == bluePlayer.find(RIGHT_EDGE);
     }
 
     // Same logic as playBlue, but switched for red winning
