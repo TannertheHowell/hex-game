@@ -8,19 +8,30 @@ public class HexGame {
     private DisjointSet redPlayer;
     private DisjointSet bluePlayer;
 
-    // Extra edge elements
-    private final int TOP_EDGE = size + 1;
-    private final int BOTTOM_EDGE = size + 2;
-    private final int LEFT_EDGE = size + 3;
-    private final int RIGHT_EDGE = size + 4;
+    private final int TOP_EDGE;
+    private final int BOTTOM_EDGE;
+    private final int LEFT_EDGE;
+    private final int RIGHT_EDGE;
+
+    // Setting up possible colors
+    public enum Color {
+        None,
+        Red,
+        Blue
+    }
 
     // Constructor and setting up red/blue's disjoint sets
-    public HexGame(int size){
-        this.size = size;
+    public HexGame(int sze){
+        this.size = sze;
         grid = new Color[size * size + 1];
-        for(int i = 1; i <= size * size; i++){
+        for(int i = 0; i < size * size; i++){
             grid[i] = Color.None;
         }
+        // Extra edge elements
+        TOP_EDGE = size * size + 1;
+        BOTTOM_EDGE = size * size + 2;
+        LEFT_EDGE = size * size + 3;
+        RIGHT_EDGE = size * size + 4;
         redPlayer = new DisjointSet(size * size + 4);
         bluePlayer = new DisjointSet(size * size + 4);
     }
@@ -36,7 +47,7 @@ public class HexGame {
         }
 
         // If it's not empty, turn it blue
-        grid[position] = Color.Blue;
+        grid[position-1] = Color.Blue;
 
         // Store all the neighbors around position
         ArrayList<Integer> neighbors = getNeighborsBlue(position);
@@ -62,28 +73,25 @@ public class HexGame {
         }
 
         // If it's not empty, turn it red
-        grid[position] = Color.Red;
+        grid[position-1] = Color.Red;
 
         // Store all the neighbors around position
         ArrayList<Integer> neighbors = getNeighborsRed(position);
 
         // Check for printing the neighbors
         if(displayNeighbors){
-            System.out.println("Red's neighbors: " + neighbors);
+            System.out.println("Red Cell " + position + " has neighbors: " + neighbors);
         }
         for (Integer neighbor : neighbors){
-            // See if we need to union different sets
-            if(grid[neighbor] == Color.Red){
+            if(neighbor > size * size || grid[neighbor-1] == Color.Red){
                 redPlayer.union(position, neighbor);
             }
+            // See if we need to union different sets
+//            if(grid[neighbor-1] == Color.Red){
+//                redPlayer.union(position, neighbor);
+//            }
         }
         return redPlayer.find(TOP_EDGE) == redPlayer.find(BOTTOM_EDGE);
-    }
-
-    private enum Color {
-        None,
-        Red,
-        Blue
     }
 
     public Color[] getGrid(){
@@ -95,24 +103,33 @@ public class HexGame {
     }
 
     private boolean isOccupied(int position){
-        return grid[position] != Color.None;
+        return grid[position-1] != Color.None;
+    }
+
+    public Color getColorAtPosition(int row, int col){
+        int position = row * size + col;
+        return grid[position];
     }
 
     private ArrayList<Integer> getNeighborsRed(int position){
+        int gridIndex = position - 1;
+        int gridIndexRow = gridIndex / size;
+        int gridIndexCol = gridIndex % size;
+
         // Store all the neighbors around position
         ArrayList<Integer> neighbors = new ArrayList<>();
 
         // 2D array for the relative rows and columns compared to the given position
-        int [][] hexCoords = {{ -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, 1 }, { 1, -1 }};
+        int [][] hexCoords = {{ -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }};
 
         // Looping over all the possible neighbors around the position
         for (int[] coords : hexCoords){
-            int updatedRow = (position - 1) / (size + coords[0]);
-            int updatedCol = (position - 1) % (size + coords[1]);
+            int neighborRow = gridIndexRow + coords[0];
+            int neighborCol = gridIndexCol + coords[1];
 
             // Before adding the new position, make sure it's within the board's size limits
-            if(updatedRow >= 0 && updatedRow < size && updatedCol >= 0 && updatedCol < size){
-                neighbors.add(updatedRow * size + updatedCol + 1);
+            if(neighborRow >= 0 && neighborRow < size && neighborCol >= 0 && neighborCol < size){
+                neighbors.add(neighborRow * size + neighborCol + 1);
             }
         }
         // Check if the position is on the top edge

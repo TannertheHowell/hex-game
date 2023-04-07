@@ -11,10 +11,13 @@ public class DisjointSet {
         }
     }
 
-    // Assuming node1 and node2 are not the same tree, negative number is size, positive number is parent
     public void union(int node1, int node2){
         node1 = find(node1);
         node2 = find(node2);
+
+        if(node1 == node2){
+            return;
+        }
 
         // node2 is larger, so we add the size from node1 to node2 and make node 2 a new node
         if (parentOrSize[node1] < parentOrSize[node2]){
