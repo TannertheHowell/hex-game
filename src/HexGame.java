@@ -144,14 +144,14 @@ public class HexGame {
                 neighbors.add(updatedRow * size + updatedCol + 1);
             }
         }
-        // Check if the position is on the top edge
-        if((position - 1) / size == 0){
-            neighbors.add(TOP_EDGE);
+        // Check if the position is on the left edge
+        if((position - 1) % size == 0){
+            neighbors.add(LEFT_EDGE);
         }
 
         // Check if the position is on the bottom edge
-        if((position - 1) / size == size - 1){
-            neighbors.add(BOTTOM_EDGE);
+        if((position - 1) % size == size - 1){
+            neighbors.add(RIGHT_EDGE);
         }
         return neighbors;
     }
