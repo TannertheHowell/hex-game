@@ -61,7 +61,7 @@ public class HexGame {
 
         // If it's not empty, turn it red
         grid[position] = Color.Red;
-        ArrayList<Integer> neighbors = getNeighborsBlue(position);
+        ArrayList<Integer> neighbors = getNeighborsRed(position);
 
         // Check for printing the neighbors
         if(displayNeighbors){
