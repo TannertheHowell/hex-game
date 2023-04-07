@@ -35,7 +35,7 @@ public class HexGame {
             return false;
         }
 
-        // If not, turn it blue
+        // If it's not empty, turn it blue
         grid[position] = Color.Blue;
         ArrayList<Integer> neighbors = getNeighborsBlue(position);
 
@@ -54,7 +54,26 @@ public class HexGame {
 
     // Same logic as playBlue, but switched for red winning
     public boolean playRed(int position, boolean displayNeighbors){
-        return false;
+        // Check if the position is already full first
+        if(isOccupied(position)){
+            return false;
+        }
+
+        // If it's not empty, turn it red
+        grid[position] = Color.Red;
+        ArrayList<Integer> neighbors = getNeighborsBlue(position);
+
+        // Check for printing the neighbors
+        if(displayNeighbors){
+            System.out.println("Red's neighbors: " + neighbors);
+        }
+        for (Integer neighbor : neighbors){
+            // See if we need to union different sets
+            if(grid[neighbor] == Color.Red){
+                redPlayer.union(position, neighbor);
+            }
+        }
+        return redPlayer.find(TOP_EDGE) == redPlayer.find(BOTTOM_EDGE);
     }
 
     private enum Color {
