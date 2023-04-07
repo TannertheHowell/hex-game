@@ -99,7 +99,6 @@ public class HexGame {
     }
 
     private ArrayList<Integer> getNeighborsRed(int position){
-
         // Store all the neighbors around position
         ArrayList<Integer> neighbors = new ArrayList<>();
 
@@ -112,7 +111,7 @@ public class HexGame {
             int updatedCol = (position - 1) % (size + coords[1]);
 
             // Before adding the new position, make sure it's within the board's size limits
-            if(updatedRow >= 0 && updatedRow < size && updatedCol > 0 && updatedCol < size){
+            if(updatedRow >= 0 && updatedRow < size && updatedCol >= 0 && updatedCol < size){
                 neighbors.add(updatedRow * size + updatedCol + 1);
             }
         }
@@ -129,6 +128,31 @@ public class HexGame {
     }
 
     private ArrayList<Integer> getNeighborsBlue(int position){
-        return null;
+        // Store all the neighbors around position
+        ArrayList<Integer> neighbors = new ArrayList<>();
+
+        // 2D array for the relative rows and columns compared to the given position
+        int [][] hexCoords = {{ -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, 1 }, { 1, -1 }};
+
+        // Looping over all the possible neighbors around the position
+        for (int[] coords : hexCoords){
+            int updatedRow = (position - 1) / (size + coords[0]);
+            int updatedCol = (position - 1) % (size + coords[1]);
+
+            // Before adding the new position, make sure it's within the board's size limits
+            if(updatedRow >= 0 && updatedRow < size && updatedCol >= 0 && updatedCol < size){
+                neighbors.add(updatedRow * size + updatedCol + 1);
+            }
+        }
+        // Check if the position is on the top edge
+        if((position - 1) / size == 0){
+            neighbors.add(TOP_EDGE);
+        }
+
+        // Check if the position is on the bottom edge
+        if((position - 1) / size == size - 1){
+            neighbors.add(BOTTOM_EDGE);
+        }
+        return neighbors;
     }
 }
