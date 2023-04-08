@@ -43,7 +43,6 @@ public class Assignment6Driver {
     }
 
 
-    // TODO: You can use this to compare with the output show in the assignment while working on your code
     private static void testGame() {
         HexGame game = new HexGame(11);
 
@@ -93,10 +92,8 @@ public class Assignment6Driver {
                 else{
                     System.out.print("0 ");
                 }
-
             }
             System.out.print("\n");
-
         }
     }
 
