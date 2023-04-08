@@ -41,6 +41,14 @@ public class HexGame {
     // When displayNeighbors is true, the hex positions of neighboring cells are shown
     // Return true if blue has won, otherwise false for not winning or if the space is full already
     public boolean playBlue(int position, boolean displayNeighbors){
+        // Store all the neighbors around position
+        ArrayList<Integer> neighbors = getNeighborsBlue(position);
+
+        // Check for printing the neighbors
+        if(displayNeighbors){
+            System.out.println("Blue Cell " + position + " has neighbors: " + neighbors);
+        }
+
         // Check if the position is already full first
         if(isOccupied(position)){
             return false;
@@ -49,24 +57,24 @@ public class HexGame {
         // If it's not empty, turn it blue
         grid[position-1] = Color.Blue;
 
-        // Store all the neighbors around position
-        ArrayList<Integer> neighbors = getNeighborsBlue(position);
-
-        // Check for printing the neighbors
-        if(displayNeighbors){
-            System.out.println("Blue's neighbors: " + neighbors);
-        }
         for (Integer neighbor : neighbors){
-            // See if we need to union different sets
-            if(grid[neighbor] == Color.Blue){
-                bluePlayer.union(position, neighbor);
+            if(neighbor > size * size || grid[neighbor - 1] == Color.Blue){
+                bluePlayer.union(position - 1, neighbor - 1);
             }
         }
-        return bluePlayer.find(LEFT_EDGE) == bluePlayer.find(RIGHT_EDGE);
+        return bluePlayer.find(LEFT_EDGE - 1) == bluePlayer.find(RIGHT_EDGE - 1);
     }
 
     // Same logic as playBlue, but switched for red winning
     public boolean playRed(int position, boolean displayNeighbors){
+        // Store all the neighbors around position
+        ArrayList<Integer> neighbors = getNeighborsRed(position);
+
+        // Check for printing the neighbors
+        if(displayNeighbors){
+            System.out.println("Red Cell " + position + " has neighbors: " + neighbors);
+        }
+
         // Check if the position is already full first
         if(isOccupied(position)){
             return false;
@@ -75,23 +83,12 @@ public class HexGame {
         // If it's not empty, turn it red
         grid[position-1] = Color.Red;
 
-        // Store all the neighbors around position
-        ArrayList<Integer> neighbors = getNeighborsRed(position);
-
-        // Check for printing the neighbors
-        if(displayNeighbors){
-            System.out.println("Red Cell " + position + " has neighbors: " + neighbors);
-        }
         for (Integer neighbor : neighbors){
             if(neighbor > size * size || grid[neighbor-1] == Color.Red){
-                redPlayer.union(position, neighbor);
+                redPlayer.union(position - 1, neighbor - 1);
             }
-            // See if we need to union different sets
-//            if(grid[neighbor-1] == Color.Red){
-//                redPlayer.union(position, neighbor);
-//            }
         }
-        return redPlayer.find(TOP_EDGE) == redPlayer.find(BOTTOM_EDGE);
+        return redPlayer.find(TOP_EDGE - 1) == redPlayer.find(BOTTOM_EDGE - 1);
     }
 
     public Color[] getGrid(){
@@ -145,29 +142,33 @@ public class HexGame {
     }
 
     private ArrayList<Integer> getNeighborsBlue(int position){
+        int gridIndex = position - 1;
+        int gridIndexRow = gridIndex / size;
+        int gridIndexCol = gridIndex % size;
+
         // Store all the neighbors around position
         ArrayList<Integer> neighbors = new ArrayList<>();
 
         // 2D array for the relative rows and columns compared to the given position
-        int [][] hexCoords = {{ -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, 1 }, { 1, -1 }};
+        int [][] hexCoords = {{ -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }};
 
         // Looping over all the possible neighbors around the position
         for (int[] coords : hexCoords){
-            int updatedRow = (position - 1) / (size + coords[0]);
-            int updatedCol = (position - 1) % (size + coords[1]);
+            int neighborRow = gridIndexRow + coords[0];
+            int neighborCol = gridIndexCol + coords[1];
 
             // Before adding the new position, make sure it's within the board's size limits
-            if(updatedRow >= 0 && updatedRow < size && updatedCol >= 0 && updatedCol < size){
-                neighbors.add(updatedRow * size + updatedCol + 1);
+            if(neighborRow >= 0 && neighborRow < size && neighborCol >= 0 && neighborCol < size){
+                neighbors.add(neighborRow * size + neighborCol + 1);
             }
         }
         // Check if the position is on the left edge
-        if((position - 1) % size == 0){
+        if(gridIndex % size == 0){
             neighbors.add(LEFT_EDGE);
         }
 
         // Check if the position is on the bottom edge
-        if((position - 1) % size == size - 1){
+        if(gridIndex % size == size - 1){
             neighbors.add(RIGHT_EDGE);
         }
         return neighbors;

@@ -4,22 +4,45 @@ import java.util.Scanner;
 public class Assignment6Driver {
     public static void main(String[] args) {
 
-        testGame();
-        //playGame("moves1.txt");
-        //System.out.println();
-        //playGame("moves2.txt");
+//        testGame();
+        playGame("moves1.txt");
+        System.out.println();
+        playGame("moves2.txt");
     }
 
     private static void playGame(String filename) {
         File file = new File(filename);
         try (Scanner input = new Scanner(file)) {
-            // TODO: Write some good stuff here
+            boolean isBlueTurn = true;
+            HexGame game = new HexGame(11);
+            while(input.hasNext()){
+
+                int position = Integer.parseInt(input.next());
+
+                if(isBlueTurn){
+                    boolean winCondition = game.playBlue(position, false);
+                    if (winCondition){
+                        System.out.println("Blue wins with move at position " + position +"!!");
+                        printGrid(game);
+                        break;
+                    }
+                }
+                else{
+                    boolean winCondition = game.playRed(position, false);
+                    if (winCondition){
+                        System.out.println("Red wins with move at position " + position +"!!");
+                        printGrid(game);
+                        break;
+                    }
+                }
+                isBlueTurn = !isBlueTurn;
+            }
         } catch (java.io.IOException ex) {
             System.out.println("An error occurred trying to read the moves file: " + ex);
         }
     }
 
-    //
+
     // TODO: You can use this to compare with the output show in the assignment while working on your code
     private static void testGame() {
         HexGame game = new HexGame(11);
@@ -35,11 +58,8 @@ public class Assignment6Driver {
 
         System.out.println("--- blue ---");
         game.playBlue(1, true);
-        printGrid(game);
         game.playBlue(2, true);
-        printGrid(game);
         game.playBlue(11, true);
-        printGrid(game);
         game.playBlue(12, true);
         game.playBlue(121, true);
         game.playBlue(122 - 11, true);
